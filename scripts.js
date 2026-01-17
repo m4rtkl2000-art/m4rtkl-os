@@ -42,6 +42,44 @@ function sendMessage() {
   }
 }
 
+/**
+ * VIDEO PREVIEW SYSTEM
+ * Handles play/pause simulation and timeline progress.
+ */
+let isPlaying = false;
+let progressInterval;
+
+function toggleVideoPlay() {
+  const btn = document.getElementById("play-btn");
+  const progress = document.getElementById("video-progress");
+  const timeLabel = document.getElementById("video-time");
+  
+  isPlaying = !isPlaying;
+  
+  if (isPlaying) {
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
+    progressInterval = setInterval(() => {
+      let currentWidth = parseFloat(progress.style.width) || 0;
+      if (currentWidth >= 100) {
+        currentWidth = 0;
+      }
+      currentWidth += 0.5;
+      progress.style.width = currentWidth + "%";
+      
+      // Update time string (mock)
+      const secs = Math.floor((currentWidth / 100) * 45);
+      timeLabel.innerText = `00:${secs < 10 ? '0' + secs : secs} / 00:45`;
+    }, 100);
+  } else {
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
+    clearInterval(progressInterval);
+  }
+}
+
+
+/**
+ * SECURITY MODAL SYSTEM
+ */
 function openSecurityPrompt() {
   const modal = document.getElementById("security-modal");
   const main = document.getElementById("main-interface");
