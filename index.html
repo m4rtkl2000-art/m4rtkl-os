@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYSTEM_OS | M4RTKL</title>
+    <link rel="icon" href="robot-solid-full.svg" type="image/svg+xml">
+    <link rel="alternate icon" href="robot-solid-full.svg" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen p-4 md:p-10">
+
+    <!-- BOOT SCREEN / LANDING -->
+    <div id="boot-screen">
+        <div class="scanline"></div>
+        <div class="w-full max-w-lg p-8 mono">
+            <div id="boot-logs" class="text-xs text-gray-500 mb-8 h-48 overflow-hidden flex flex-col justify-end space-y-1">
+                <!-- Logs added via JS -->
+            </div>
+            <div class="space-y-6 text-center">
+                <div class="inline-block relative">
+                    <div class="w-20 h-20 border-2 border-green-500 rounded-full animate-ping absolute opacity-20"></div>
+                    <div class="w-20 h-20 border border-green-500 flex items-center justify-center rounded bg-green-500/10">
+                        <i class="fas fa-terminal terminal-text text-3xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold tracking-[0.2em] terminal-text mb-2">SYSTEM_OS</h1>
+                    <p class="text-[10px] uppercase opacity-40">Integrated Development Environment v1.5.0</p>
+                </div>
+                <button id="btn-initialize" class="px-8 py-3 border border-green-500/50 hover:bg-green-500 hover:text-black transition-all duration-300 text-xs font-bold tracking-widest uppercase">
+                    Initialize Session
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN INTERFACE -->
+    <div id="main-interface">
+        <!-- Ambient Background Effect -->
+        <div class="fixed inset-0 pointer-events-none overflow-hidden opacity-20">
+            <div class="absolute -top-24 -left-24 w-96 h-96 bg-green-500 rounded-full blur-[160px]"></div>
+            <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-blue-500 rounded-full blur-[160px]"></div>
+        </div>
+
+        <main class="w-full max-w-6xl mx-auto z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 relative">
+            
+            <!-- LEFT: NAVIGATION & STATUS -->
+            <div class="lg:col-span-3 space-y-6">
+                <div class="glass-panel p-6">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-12 h-12 rounded-lg bg-green-500/20 flex items-center justify-center border border-green-500/50">
+                            <i class="fas fa-terminal terminal-text text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-bold tracking-widest uppercase text-xs opacity-50">System Core</h2>
+                            <p class="mono text-sm">v1.5.0_stable</p>
+                        </div>
+                    </div>
+
+                    <nav class="space-y-4 mono text-sm" id="main-nav">
+                        <div data-target="home" class="nav-link active block">HOME</div>
+						<div data-target="info" class="nav-link block">INFO</div>
+                        <div data-target="repository" class="nav-link block">REPOSITORY</div>	
+                        <div data-target="services" class="nav-link block">SERVICES</div>
+						<div data-target="community" class="nav-link">COMMUNITY_HUB</div>
+						<div data-target="about-site" class="nav-link block">ABOUT_SITE</div>
+                        <div id="btn-disconnect" class="nav-link block text-red-400 mt-4 border-t border-white/5 pt-4">DISCONNECT</div>
+                    </nav>
+                </div>
+
+                <div class="glass-panel p-6 space-y-4">
+                    <h3 class="mono text-xs font-bold uppercase opacity-50">Hardware Status</h3>
+                    <div class="space-y-3">
+                        <div class="text-xs">
+                            <div class="flex justify-between mb-1">
+                                <span>CPU Usage</span>
+                                <span id="cpu-text" class="terminal-text transition-all duration-500">32%</span>
+                            </div>
+                            <div class="w-full bg-white/10 h-1 rounded-full overflow-hidden">
+                                <div id="cpu-bar" class="bg-green-500 h-full w-[32%] transition-all duration-500 ease-out"></div>
+                            </div>
+                        </div>
+                        <div class="text-xs">
+                            <div class="flex justify-between mb-1">
+                                <span>Memory</span>
+                                <span id="mem-text" class="terminal-text transition-all duration-500">8.4GB / 128GB</span>
+                            </div>
+                            <div class="w-full bg-white/10 h-1 rounded-full overflow-hidden">
+                                <div id="mem-bar" class="bg-blue-500 h-full w-[15%] transition-all duration-500 ease-out"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CENTER: MAIN DYNAMIC CONTENT -->
+            <div class="lg:col-span-6 flex flex-col gap-6">
+                <div class="glass-panel flex-grow relative overflow-hidden flex flex-col min-h-[550px]">
+                    <div class="scanline"></div>
+                    
+                    <!-- Terminal Header -->
+                    <div class="px-6 py-4 border-b border-border flex justify-between items-center bg-white/5">
+                        <div class="flex gap-2">
+                            <div class="w-2 h-2 rounded-full bg-red-500"></div>
+                            <div class="w-2 h-2 rounded-full bg-yellow-500"></div>
+                            <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                        </div>
+                        <span id="view-title" class="mono text-[10px] uppercase tracking-widest opacity-50">Remote Session: 127.0.0.1</span>
+                    </div>
+
+                    <!-- SECTIONS -->
+                    <div class="p-6 flex-grow mono text-sm overflow-y-auto">
+                        
+                        <!-- HOME SECTION -->
+                        <div id="home-section" class="content-section active space-y-2">
+                            <div class="text-gray-500">// INITIALIZING SECURE CONNECTION...</div>
+                            <div class="text-gray-500">// AUTHENTICATION SUCCESSFUL.</div>
+                            <div class="terminal-text pt-2 text-lg font-bold">Welcome, Developer. Your workspace is ready.</div>
+                            <div class="text-xs opacity-50 mb-4 italic">Type 'help' to list available system commands. <br>Command list [about, clear, contact, projects, skills, status]</div>
+                            
+                            <div id="terminal-screen" class="space-y-2">
+                                <div id="output-log"></div>
+                                <div class="flex items-center gap-2 pt-2">
+                                    <span class="terminal-text font-bold">root@m4rtkl:~#</span>
+                                    <input type="text" id="command-input" class="bg-transparent border-none w-full text-white" autofocus autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+						
+						<!-- ABOUT ME SECTION -->
+                        <div id="info-section" class="content-section space-y-6">
+                            <div class="flex justify-between items-end border-b border-white/10 pb-2">
+                                <h2 class="terminal-text text-xl font-bold tracking-tighter">PERSONAL_DATABASE</h2>
+                                <span class="text-[10px] opacity-50">ITEMS[] = 6</span>
+                            </div>
+                            
+                            <!-- Biography -->
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-2 text-green-500">
+                                    <i class="fas fa-user-circle"></i>
+                                    <span class="text-xs font-bold uppercase tracking-widest">Biography</span>
+                                </div>
+                                <div class="p-4 bg-white/5 border border-white/10 rounded-lg">
+                                    <p class="text-xs text-gray-300 leading-relaxed italic indent-[1em]">
+                                        "Starting as a gamer, I gradually developed an interest in coding and video editing. 
+                                        I hold a degree in Business Administration and enjoy learning new technologies and building practical tools for fun and work flow."
+                                    </p>
+                                </div>
+								<div class="p-4 bg-white/5 border border-white/10 rounded-lg">
+									<p class="text-xs text-gray-300 leading-relaxed  text-center">What I create comes from problems I face and a desire to make things simpler and more convenient.</p>
+								</div>
+                            </div>
+
+							<!-- Learner Section -->
+                            <div class="space-y-3">
+                                <button onclick="toggleSection('learner-box', 'learner-icon')" class="w-full flex items-center justify-between gap-2 text-yellow-500 group focus:outline-none">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-chart-line"></i>
+                                        <span class="text-xs font-bold uppercase tracking-widest">Learning_Path</span>
+                                    </div>
+                                    <i id="learner-icon" class="fas fa-chevron-down text-[10px] transition-transform duration-300"></i>
+                                </button>
+                                <div id="learner-box" class="collapsible-content">
+									<div class="p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-lg">
+										<p class="text-[11px] text-gray-400 mb-2">// CURRENTLY EXPLORING NEW TECHNOLOGIES</p>
+										<ul class="text-xs space-y-2 text-gray-300">
+											<li class="flex items-center gap-2">
+												<span class="text-yellow-500 font-bold">>></span> 
+												<span>Currently studying <span class="text-white">Programming / Web development</span> (C++, React & FastAPI).</span>
+											</li>
+											<li class="flex items-center gap-2">
+												<span class="text-yellow-500 font-bold">>></span> 
+												<span>Developing <span class="text-white">AI Automation</span> skills to improve work efficiency.</span>
+											</li>
+											<li class="flex items-center gap-2">
+												<span class="text-yellow-500 font-bold">>></span> 
+												<span>Practicing advanced <span class="text-white">Everything</span> to make something useful.</span>
+											</li>
+										</ul>
+									</div>
+								</div>
+                            </div>
+							
+							<!-- Skill Proficiency Section (New Toggleable) -->
+                            <div class="space-y-3">
+                                <button onclick="toggleSection('proficiency-box', 'proficiency-icon')" class="w-full flex items-center justify-between gap-2 text-blue-400 group focus:outline-none">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-chart-line"></i>
+                                        <span class="text-xs font-bold uppercase tracking-widest">Skill_Proficiency</span>
+                                    </div>
+                                    <i id="proficiency-icon" class="fas fa-chevron-down text-[10px] transition-transform duration-300"></i>
+                                </button>
+                                <div id="proficiency-box" class="collapsible-content">
+                                    <div class="p-4 bg-blue-500/5 border border-blue-500/20 rounded-lg space-y-5 mt-2">
+                                        <!-- Coding Skills -->
+                                        <div class="space-y-2">
+                                            <div class="flex items-center gap-2 text-[10px] text-blue-300 font-bold uppercase tracking-widest border-b border-blue-300/10 pb-1">
+                                                <i class="fas fa-code"></i> Coding
+                                            </div>
+                                            <div class="space-y-1.5 pl-2">
+                                                <div class="flex justify-between text-[11px]">
+                                                    <span class="text-gray-300">Python</span>
+                                                    <span class="text-yellow-500">(Intermediate)</span>
+                                                </div>
+                                                <div class="flex justify-between text-[11px]">
+                                                    <span class="text-gray-300">C++</span>
+                                                    <span class="text-blue-500">(Beginner)</span>
+                                                </div>
+                                                <div class="flex justify-between text-[11px]">
+                                                    <span class="text-gray-300">JavaScript</span>
+                                                    <span class="text-blue-500">(Beginner)</span>
+                                                </div>
+												<div class="flex justify-between text-[11px]">
+                                                    <span class="text-gray-300">HTML, CSS</span>
+                                                    <span class="text-blue-500">(Beginner)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Editing Skills -->
+                                        <div class="space-y-2">
+                                            <div class="flex items-center gap-2 text-[10px] text-purple-300 font-bold uppercase tracking-widest border-b border-purple-300/10 pb-1">
+                                                <i class="fas fa-film"></i> Editing
+                                            </div>
+                                            <div class="space-y-1.5 pl-2">
+                                                <div class="flex justify-between text-[11px]">
+                                                    <span class="text-gray-300">After Effects</span>
+                                                    <span class="text-yellow-500">(Intermediate)</span>
+                                                </div>
+                                                <div class="flex justify-between text-[11px]">
+                                                    <span class="text-gray-300">Premiere Pro</span>
+                                                    <span class="text-green-500">(Advanced)</span>
+                                                </div>
+												<div class="flex justify-between text-[11px]">
+                                                    <span class="text-gray-300">CapCut</span>
+                                                    <span class="text-green-500">(Advanced)</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Level Legend -->
+                                        <div class="pt-3 border-t border-white/5 space-y-2">
+                                            <p class="text-[9px] text-gray-500 uppercase font-bold">Proficiency Levels:</p>
+                                            <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-[9px]">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                                                    <span class="text-gray-400">Beginner</span>
+                                                </div>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="w-1.5 h-1.5 bg-yellow-500 rounded-full"></span>
+                                                    <span class="text-gray-400">Intermediate</span>
+                                                </div>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                                                    <span class="text-gray-400">Advanced</span>
+                                                </div>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="w-1.5 h-1.5 bg-pink-500 rounded-full"></span>
+                                                    <span class="text-gray-400">Expert</span>
+                                                </div>
+                                            </div>
+                                        </div>
+										
+										<!-- AI Unified Skill -->
+										<div class="space-y-2">
+											<div class="flex items-center gap-2 text-[10px] text-green-400 font-bold uppercase tracking-widest border-b border-green-400/10 pb-1">
+												<i class="fas fa-microchip"></i> AI Implementation
+											</div>
+											<div class="space-y-1.5 pl-2">
+												<div class="flex flex-col gap-1">
+													<div class="flex justify-between text-[11px]">
+														<span class="text-gray-300 font-bold">AI Workflow & Integration</span>
+														<span class="text-gray-300">Proficient</span>
+													</div>
+													<p class="text-[10px] text-gray-500 leading-relaxed">
+														Able to apply AI tools (Vibing, Thinking, Helper) to systematically enhance workflow efficiency, problem-solving, and creative processes.
+													</p>
+												</div>
+											</div>
+										</div>
+                                    </div>
+                                </div>
+                            </div>
+							
+							<!-- Achievements Section (New Toggleable) -->
+                            <div class="space-y-3">
+                                <button onclick="toggleSection('achievement-box', 'achievement-icon')" class="w-full flex items-center justify-between gap-2 text-pink-500 group focus:outline-none">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas fa-trophy"></i>
+                                        <span class="text-xs font-bold uppercase tracking-widest">Achievements</span>
+                                    </div>
+                                    <i id="achievement-icon" class="fas fa-chevron-down text-[10px] transition-transform duration-300"></i>
+                                </button>
+                                <div id="achievement-box" class="collapsible-content">
+                                    <div class="p-4 bg-pink-500/5 border border-pink-500/20 rounded-lg space-y-3">
+                                         <!-- Milestone 1 -->
+                                        <div class="space-y-1">
+                                            <div class="flex items-center justify-between text-[11px]">
+                                                <span class="text-gray-300"><i class="fas fa-check-circle text-green-500 mr-2"></i>Self-Learning basic programming languages</span>
+                                                <span class="text-green-500 font-bold uppercase">Success!</span>
+                                            </div>
+                                            <div class="pl-6 text-[10px] text-gray-500 font-mono">
+                                                (JavaScript, Python, C++)
+                                            </div>
+                                        </div>
+
+                                        <!-- Milestone 2 -->
+                                        <div class="space-y-1">
+                                            <div class="flex items-center justify-between text-[11px]">
+                                                <span class="text-gray-300"><i class="fas fa-check-circle text-green-500 mr-2"></i>Self-Learning to use various video editing software</span>
+                                                <span class="text-green-500 font-bold uppercase">Success!</span>
+                                            </div>
+                                            <div class="pl-6 text-[10px] text-gray-500 font-mono">
+                                                (Premiere Pro, After Effects, DaVinci, CapCut)
+                                            </div>
+                                        </div>
+
+                                        <!-- Footer Info -->
+                                        <div class="pt-2 border-t border-white/5 text-[10px] text-gray-500 italic">
+                                            // More milestones are being recorded...
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- PC Specs -->
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-2 text-blue-500">
+                                    <i class="fas fa-microchip"></i>
+                                    <span class="text-xs font-bold uppercase tracking-widest">Hardware_Specs</span>
+                                </div>
+                                <div class="grid grid-cols-1 gap-2 text-[10px]">
+                                    <div class="p-2 border border-white/5 bg-white/5 flex justify-between">
+                                        <span class="text-gray-500">CPU</span>
+                                        <span class="text-white">RYZEN 7 5000 Series</span>
+                                    </div>
+                                    <div class="p-2 border border-white/5 bg-white/5 flex justify-between">
+                                        <span class="text-gray-500">GPU</span>
+                                        <span class="text-white">AMD RADEON™ 6000 Series</span>
+                                    </div>
+                                    <div class="p-2 border border-white/5 bg-white/5 flex justify-between">
+                                        <span class="text-gray-500">RAM</span>
+                                        <span class="text-white">64GB DDR4 3200MHz</span>
+                                    </div>
+									<div class="p-2 border border-white/5 bg-white/5 flex justify-between">
+                                        <span class="text-gray-500">MAINBOARD</span>
+                                        <span class="text-white">A520 Chipset</span>
+                                    </div>
+                                    <div class="p-2 border border-white/5 bg-white/5 flex justify-between">
+                                        <span class="text-gray-500">MONITOR (MAIN)</span>
+                                        <span class="text-white">27" IPS 180Hz</span>
+                                    </div>
+									<div class="p-2 border border-white/5 bg-white/5 flex justify-between">
+                                        <span class="text-gray-500">MONITOR (SECOND)</span>
+                                        <span class="text-white">21" IPS 60Hz</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Workspace Tools -->
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-2 text-purple-500">
+                                    <i class="fas fa-tools"></i>
+                                    <span class="text-xs font-bold uppercase tracking-widest">Dev_Environment</span>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3 text-[10px]">
+                                    <div class="flex items-center gap-3 p-3 rounded-lg border border-white/5 bg-white/5">
+                                        <i class="fas fa-code-branch text-blue-400"></i>
+                                        <div>
+                                            <div class="font-bold">VS CODE</div>
+                                            <div class="text-gray-500 opacity-50">Code Editor</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3 p-3 rounded-lg border border-white/5 bg-white/5">
+                                        <i class="fas fa-film text-purple-400"></i>
+                                        <div>
+                                            <div class="font-bold">ADOBE / CapCut / Davinci</div>
+                                            <div class="text-gray-500 opacity-50">Video Editing</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3 p-3 rounded-lg border border-white/5 bg-white/5">
+                                        <i class="fab fa-windows text-yellow-400"></i>
+                                        <div>
+                                            <div class="font-bold">Windows 11</div>
+                                            <div class="text-gray-500 opacity-50">Operating System</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3 p-3 rounded-lg border border-white/5 bg-white/5">
+                                        <i class="fa-solid fa-globe text-orange-500"></i>
+                                        <div>
+                                            <div class="font-bold">AI-Assisted & Self-Learning</div>
+                                            <div class="text-gray-500 opacity-50">Google Gemini / ChatGPT</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- REPOSITORY SECTION -->
+                        <div id="repository-section" class="content-section space-y-6">
+                            <div class="flex justify-between items-end border-b border-white/10 pb-2">
+                                <h2 class="terminal-text text-xl font-bold tracking-tighter">DATA_REPOSITORIES</h2>
+                                <span class="text-[10px] opacity-50">INDEX_COUNT: 02</span>
+                            </div>
+                            <div class="grid gap-4">
+                                <!-- VideoToolPro Link -->
+                                <a href="https://github.com/m4rtkl2000-art/VideoToolPro" target="_blank" class="block group">
+                                    <div class="p-4 rounded bg-white/5 border border-white/10 group-hover:border-green-500/50 group-hover:bg-green-500/5 transition-all">
+                                        <div class="flex justify-between items-start">
+                                            <span class="text-green-400 font-bold group-hover:text-green-300">01 / VideoToolPro</span>
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-[10px] text-gray-500 px-1.5 py-0.5 border border-gray-500/30 rounded">STABLE</span>
+                                                <i class="fas fa-external-link-alt text-[10px] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                            </div>
+                                        </div>
+                                        <p class="text-xs text-gray-400 mt-2">An easy-to-use video downloading from URL and merging tool (M3U8/MP4) with a clean and modern GUI.</p>
+										<p class="text-[10px] text-white">(A simple and powerful Video Downloader & Merger with a modern ImGui interface)</p>
+                                        <div class="mt-3 flex gap-4 text-[10px] font-bold text-gray-500">
+                                            <span><i class="fas fa-circle text-blue-500 text-[8px] mr-1"></i> Python</span>
+											<span><i class="fa-solid fa-desktop mr-1"></i> Portable</span>
+                                            <span><i class="far fa-file mr-1"></i> .py .exe</span>
+                                        </div>
+                                    </div>
+                                </a>
+								
+								<a href="https://github.com/m4rtkl2000-art/Disk-Activity-Monitor" target="_blank" class="block group">
+                                    <div class="p-4 rounded bg-white/5 border border-white/10 group-hover:border-green-500/50 group-hover:bg-green-500/5 transition-all">
+                                        <div class="flex justify-between items-start">
+                                            <span class="text-green-400 font-bold group-hover:text-green-300">01 / Disk-Activity-Monitor</span>
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-[10px] text-gray-500 px-1.5 py-0.5 border border-gray-500/30 rounded">BETA</span>
+                                                <i class="fas fa-external-link-alt text-[10px] opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                            </div>
+                                        </div>
+                                        <p class="text-xs text-gray-400 mt-2">Disk Activity Monitor is a lightweight disk tool for Windows that monitors file access activity of running processes.</p>
+										<p class="text-[10px] text-white">(It includes built-in Threat Intelligence analysis)</p>
+                                        <div class="mt-3 flex gap-4 text-[10px] font-bold text-gray-500">
+                                            <span><i class="fas fa-circle text-blue-500 text-[8px] mr-1"></i> Python</span>
+											<span><i class="fa-solid fa-desktop mr-1"></i> Portable</span>
+                                            <span><i class="far fa-file mr-1"></i> .py</span>
+                                        </div>
+                                    </div>
+                                </a>
+                                
+                                <div class="p-4 rounded bg-white/5 border border-white/10 hover:border-green-500/30 transition-all opacity-50 cursor-not-allowed">
+                                    <span class="text-gray-400 font-bold">03 / NULL</span>
+                                    <p class="text-xs text-gray-400 mt-2">(COMMING SOON)</p>
+                                </div>
+                            </div>
+                        </div>
+						
+						<!-- ABOUT SITE SECTION -->
+                        <div id="about-site-section" class="content-section space-y-6">
+                            <div class="flex justify-between items-end border-b border-white/10 pb-2">
+                                <h2 class="terminal-text text-xl font-bold tracking-tighter">ABOUT_THIS_SITE</h2>
+                                <span class="text-[10px] opacity-50">DESCRIPTION</span>
+                            </div>
+                            <div class="space-y-4 leading-relaxed text-gray-300">
+                                <div class="p-4 border-l-2 border-green-500 bg-green-500/5">
+                                    <p class="text-sm">
+                                        This website was created as a space to showcase my work and identity through a <span class="terminal-text">Cyber-Terminal Interface</span>, focusing on a user experience that feels like accessing a classic operating system.
+                                    </p>
+                                </div>
+								<div class="space-y-2">
+                                    <h3 class="mono text-xs font-bold uppercase text-gray-400">Stack_Configuration:</h3>
+                                    <div class="grid grid-cols-2 gap-2 text-[10px] mono">
+                                        <div class="p-2 border border-white/5 bg-white/5 flex items-center gap-2">
+                                            <i class="fab fa-html5 text-orange-500"></i> HTML5 (Markup)
+                                        </div>
+                                        <div class="p-2 border border-white/5 bg-white/5 flex items-center gap-2">
+                                            <i class="fab fa-js text-yellow-400"></i> JAVASCRIPT (Logic)
+                                        </div>
+                                        <div class="p-2 border border-white/5 bg-white/5 flex items-center gap-2">
+                                            <i class="fab fa-css3-alt text-blue-400"></i> CSS3 (Vanilla Style)
+                                        </div>
+                                        <div class="p-2 border border-white/5 bg-white/5 flex items-center gap-2">
+                                            <i class="fas fa-wind text-cyan-400"></i> TAILWIND (Utilities)
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid gap-4 mt-6">
+                                    <div class="glass-panel p-4 border border-white/5">
+                                        <h3 class="mono text-xs font-bold uppercase text-green-500 mb-2">Designer & Architect</h3>
+                                        <p class="text-sm">Concept and design by <span class="font-bold text-white uppercase tracking-wider">"M4RTKL".</span></p>
+                                    </div>
+                                    <div class="glass-panel p-4 border border-white/5">
+                                        <h3 class="mono text-xs font-bold uppercase text-blue-400 mb-2">Development Tool</h3>
+                                        <p class="text-sm">Built and developed using <span class="font-bold text-white uppercase tracking-wider">"Gemini AI"</span> as an assisting tool for programming.</p>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] mono opacity-40 mt-10">
+                                    STATUS: STABLE_BUILD // NO_CORE_ERRORS_DETECTED
+                                </p>
+                            </div>
+                        </div>
+						
+						
+						<!-- COMMUNITY HUB SECTION -->
+						<div id="community-section" class="content-section space-y-6">
+							<div class="flex justify-between items-end border-b border-white/10 pb-2">
+								<h2 class="terminal-text text-xl font-bold tracking-tighter">COMMUNITY_HUB</h2>
+								<span class="text-[10px] opacity-50">P2P_NETWORK</span>
+							</div>
+
+							<!-- Community Channels -->
+							<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+								<a href="#" class="glass-panel p-4 flex items-center gap-4 hover:border-blue-500 transition-colors group">
+									<i class="fab fa-discord text-2xl text-blue-400 group-hover:scale-110 transition-transform"></i>
+									<div>
+										<div class="text-[10px] font-bold">DISCORD</div>
+										<div class="text-[9px] opacity-50 uppercase">Join the server</div>
+									</div>
+								</a>
+								<a href="#" class="glass-panel p-4 flex items-center gap-4 hover:border-pink-500 transition-colors group">
+									<i class="fab fa-instagram text-2xl text-pink-400 group-hover:scale-110 transition-transform"></i>
+									<div>
+										<div class="text-[10px] font-bold">INSTAGRAM</div>
+										<div class="text-[9px] opacity-50 uppercase">Daily Updates</div>
+									</div>
+								</a>
+								<a href="https://github.com/m4rtkl2000-art" target="_blank" class="glass-panel p-4 flex items-center gap-4 hover:border-white transition-colors group">
+									<i class="fab fa-github text-2xl text-white group-hover:scale-110 transition-transform"></i>
+									<div>
+										<div class="text-[10px] font-bold">GITHUB</div>
+										<div class="text-[9px] opacity-50 uppercase">Open Source</div>
+									</div>
+								</a>
+							</div>
+
+							<!-- Message Board -->
+							<div class="space-y-4">
+								<h3 class="mono text-xs font-bold text-gray-500 uppercase flex items-center gap-2">
+									<span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+									Live_Board:
+								</h3>
+								<div class="p-4 bg-black/40 border border-white/5 rounded-lg h-48 overflow-y-auto space-y-3 mono text-[11px]" id="message-container">
+									<div class="flex gap-3">
+										<span class="text-blue-400">[SYSTEM]:</span>
+										<span class="text-gray-500">Welcome to the board. Keep it clean.</span>
+									</div>
+									<div class="flex gap-3">
+										<span class="text-green-500">Visitor_42:</span>
+										<span class="text-gray-300">Cool terminal theme! How did you build this?</span>
+									</div>
+									<div class="flex gap-3">
+										<span class="text-purple-500">[DEVELOPER]:</span>
+										<span class="text-gray-500">USING GEMINI TO HELP WITH IDEA CREATION</span>
+									</div>
+								</div>
+								
+								<!-- Simple Simulation Input -->
+								<div class="flex gap-2">
+									<input type="text" id="chat-input" placeholder="Type a message..." class="chat-input w-full p-2 rounded text-xs mono">
+									<button onclick="sendMessage()" class="btn-mini rounded px-4 bg-green-500/10 text-green-500 border-green-500/50 hover:bg-green-500 hover:text-black">SEND</button>
+								</div>
+							</div>
+						</div>
+
+                        <!-- SERVICES SECTION -->
+                        <div id="services-section" class="content-section space-y-6">
+                            <div class="flex justify-between items-end border-b border-white/10 pb-2">
+                                <h2 class="terminal-text text-xl font-bold tracking-tighter">CORE_SERVICES</h2>
+                                <span class="text-[10px] opacity-50">STATUS: ALL_ACTIVE</span>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="p-4 border border-white/10 rounded-lg flex flex-col items-center text-center space-y-3 hover:bg-white/5 transition hover:border-purple-500/50">
+                                    <i class="fas fa-video text-2xl text-purple-500"></i>
+                                    <h3 class="font-bold text-sm tracking-wider">VIDEO_EDITING</h3>
+                                    <p class="text-[11px] text-gray-400 italic">Video editing services with transition, sfx and mood control to make your content stand out.</p>
+                                </div>
+                                <div class="p-4 border border-white/10 rounded-lg flex flex-col items-center text-center space-y-3 hover:bg-white/5 transition hover:border-pink-500/50">
+                                    <i class="fas fa-code text-2xl text-pink-500"></i>
+                                    <h3 class="font-bold text-sm tracking-wider">CODING_FOR_FUN</h3>
+                                    <p class="text-[11px] text-gray-400 italic">Developing programs from fun ideas or building automation tools to improve workflow.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: BIOMETRICS & QUICK INFO -->
+            <div class="lg:col-span-3 space-y-6">
+                <div class="glass-panel p-6 text-center">
+                    <div class="relative inline-block mb-4 group">
+                        <div class="w-24 h-24 rounded-full border-2 border-dashed border-green-500/50 p-2 animate-[spin_10s_linear_infinite]"></div>
+                        
+                        <img src="M4RTKL.webp" 
+                             alt="Profile"
+                             class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full grayscale hover:grayscale-0 transition-all duration-500 cursor-zoom-in z-10"
+                             onerror="this.src='https://api.dicebear.com/7.x/pixel-art/svg?seed=M4RTKL'">
+
+						<div class="absolute left-full top-1/2 -translate-y-1/2 ml-4 opacity-0 scale-50 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto transition-all duration-300 z-50">
+							<div class="w-3 h-3 bg-black border-l border-b border-green-500/50 rotate-45 absolute left-[-6px] top-1/2 -translate-y-1/2"></div>
+							
+							<div class="glass-panel p-2 bg-black/80 border-green-500/50 shadow-[0_0_20px_rgba(0,255,65,0.2)]">
+								<img src="M4RTKL.webp" 
+									 alt="Large Preview"
+									 class="w-50 h-50 rounded-lg object-cover">
+								<div class="mt-2 mono text-[10px] text-green-500 uppercase tracking-tighter">
+									M4RTKL.webp
+								</div>
+							</div>
+						</div>
+                    </div>
+                    <h2 class="font-bold text-xl tracking-tight uppercase">M4RTKL</h2>
+					<p class="text-xs mono opacity-50 mb-1">* AMATUER *</p>
+                    <p class="text-xs mono opacity-50 mb-1">Coder · Viber · Editor</p>
+					<p class="text-xs mono opacity-50 mb-1">* CONTACT *</p>
+					<p class="text-xs mono opacity-50 mb-4"><i class="fa-regular fa-envelope"></i> m4rtkl2000@proton.me</p>
+						
+                    <div class="flex justify-center gap-4 text-gray-400">
+                        <!-- Social Tooltip 1 -->
+                        <div class="tooltip-container">
+                            <a href="https://github.com/m4rtkl2000-art" class="hover:text-green-400 transition"><i class="fab fa-github"></i></a>
+                            <span class="tooltip-text">GITHUB_PROFILE</span>
+                        </div>
+						<!-- Social Tooltip 2 -->
+						<div class="tooltip-container">
+                            <a href="#" class="hover:text-green-400 transition"><i class="fa-brands fa-youtube"></i></a>
+                            <span class="tooltip-text">YOUTUBE_CHANNEL</span>
+                        </div>
+                        <!-- Social Tooltip 3 (DARK MODE PROGRAMMER) -->
+                        <div class="tooltip-container">
+                            <a href="javascript:void(0)" onclick="openSecurityPrompt()" class="hover:text-green-400 transition"><i class="fa-solid fa-face-angry"></i></a>
+							<span class="tooltip-text">DARK_MODE_DEVELOPER</span>
+                        </div>
+                    </div>
+				</div>
+
+                <!-- ACTIVE MODULES SECTION -->
+                <div class="glass-panel p-6">
+                    <h3 class="mono text-xs font-bold uppercase opacity-50 mb-4">Active Modules</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-center gap-3 text-xs p-2 rounded bg-white/5 border border-white/5">
+                            <i class="fas fa-video text-purple-400"></i>
+                            <span>AfterEffects_Scripting</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-xs p-2 rounded bg-white/5 border border-white/5">
+                            <i class="fas fa-brain text-pink-400"></i>
+                            <span>AI_Vibe_Engine.py</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-xs p-2 rounded bg-white/5 border border-white/5">
+                            <i class="fas fa-box text-blue-500"></i>
+                            <span>Docker_Environment</span>
+                        </div>
+                        <div class="flex items-center gap-3 text-xs p-2 rounded bg-white/5 border border-white/5">
+                            <i class="fas fa-database text-yellow-400"></i>
+                            <span>Postgres_Core</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+	
+	<!-- SECURITY PROMPT MODAL -->
+	<div id="security-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 backdrop-blur-sm">
+		<div class="glass-panel p-8 max-w-sm w-full border-red-500/30 text-center space-y-6">
+			<div class="terminal-text text-lg font-bold animate-pulse">SECURITY_ALERT</div>
+			<p class="mono text-xs text-gray-300">"YOU REALLY WANT TO KNOW?"</p>
+			<div class="flex gap-4 justify-center">
+				<button onclick="revealHiddenContent()" class="btn-mini px-6 py-2 border-green-500/50 text-green-500 hover:bg-green-500 hover:text-black">YES</button>
+				<button onclick="closeSecurityModal()" class="btn-mini px-6 py-2 border-red-500/50 text-red-500 hover:bg-red-500 hover:text-black">NO</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- HIDDEN LINKS MODAL -->
+	<div id="hidden-links-modal" class="fixed inset-0 z-[101] hidden items-center justify-center bg-black/80 backdrop-blur-md">
+		<div class="glass-panel p-6 max-w-lg w-full border-green-500/30 space-y-4">
+			<div class="flex justify-between items-center border-b border-white/10 pb-2">
+				<span class="terminal-text font-bold">DARK_MODE_DATABASE</span>
+				<button onclick="closeHiddenContent()" class="text-xs opacity-50 hover:opacity-100">CLOSE [X]</button>
+			</div>
+			<div class="space-y-6 py-4 overflow-y-auto max-h-[70vh] pr-2 custom-scrollbar">
+				<!-- DISCLAIMER / LEGAL WARNING -->
+				<div class="p-4 bg-red-950/20 border border-red-500/30 rounded-lg text-center space-y-2">
+					<div class="text-[10px] terminal-text font-bold text-red-500 tracking-[0.2em] uppercase animate-pulse">
+						* FOR EDUCATION PURPOSE ONLY *
+					</div>
+					<div class="text-[10px] text-red-400/80 leading-relaxed font-mono">
+						These information and resources are provided for educational purposes only. <br>
+						They are not intended to cause harm to any individual or system. <br>
+						If they are used for unlawful, illegal, or unethical purposes, <br>
+						<span class="text-red-500 underline">The developer shall not be held responsible for any consequences or damages arising from such use.</span>
+					</div>
+				</div>
+				
+				<!-- CATEGORY: RESOURCES -->
+				<div>
+					<div class="flex items-center gap-2 mb-3">
+						<div class="h-[1px] flex-grow bg-green-500/20"></div>
+						<span class="text-[10px] terminal-text font-bold text-green-500/70 uppercase tracking-widest">Resources</span>
+						<div class="h-[1px] flex-grow bg-green-500/20"></div>
+					</div>
+					<div class="grid grid-cols-1 gap-2">
+						<a href="https://www.unknowncheats.me/forum/insurgency/733312-insurgency-2014-x64-external-wallhack-m4rtkl.html" class="block p-3 bg-white/5 rounded border border-white/10 hover:border-green-500 transition-all group" target="_blank">
+							<div class="text-[9px] text-green-400 font-bold group-hover:animate-pulse">INSURGENCY 2014 CHEAT</div>
+							<div class="text-xs text-gray-300">Insurgency 2014 (x64) External Wallhack</div>
+						</a>
+						<a href="#" class="block p-3 bg-white/5 rounded border border-white/10 hover:border-green-500 transition-all group" target="_blank">
+							<div class="text-[9px] text-green-400 font-bold group-hover:animate-pulse">RES_02</div>
+							<div class="text-xs text-gray-300">SAMPLE</div>
+						</a>
+					</div>
+				</div>
+
+				<!-- CATEGORY: PROFILES -->
+				<div>
+					<div class="flex items-center gap-2 mb-3">
+						<div class="h-[1px] flex-grow bg-blue-500/20"></div>
+						<span class="text-[10px] terminal-text font-bold text-blue-500/70 uppercase tracking-widest">Social Profiles</span>
+						<div class="h-[1px] flex-grow bg-blue-500/20"></div>
+					</div>
+					<div class="grid grid-cols-1 gap-2">
+						<a href="https://unknowncheats.me/forum/members/7197662.html" class="block p-3 bg-white/5 rounded border border-white/10 hover:border-blue-500 transition-all group" target="_blank">
+							<div class="text-[9px] text-blue-400 font-bold">UNKNOWCHEAT</div>
+							<div class="text-xs text-gray-300 italic">Cheat Developer</div>
+						</a>
+					</div>
+				</div>
+
+				<!-- CATEGORY: OTHERS -->
+				<div>
+					<div class="flex items-center gap-2 mb-3">
+						<div class="h-[1px] flex-grow bg-gray-500/20"></div>
+						<span class="text-[10px] terminal-text font-bold text-gray-500/70 uppercase tracking-widest">Others</span>
+						<div class="h-[1px] flex-grow bg-gray-500/20"></div>
+					</div>
+					<div class="grid grid-cols-1 gap-2 opacity-60 hover:opacity-100 transition-opacity">
+						<a href="#" class="block p-3 bg-white/5 rounded border border-white/10 hover:border-white/30 transition-all" target="_blank">
+							<div class="text-[9px] text-gray-400 font-bold">MISC_DATA</div>
+							<div class="text-xs text-gray-400 italic font-mono">Encrypted_Log_File.bin</div>
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- FOOTER / COPYRIGHT -->
+        <footer class="w-full max-w-6xl mx-auto mt-10 mb-6 px-4">
+            <div class="border-t border-white/5 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 opacity-40 hover:opacity-100 transition-opacity duration-500">
+                <div class="mono text-[10px] tracking-widest uppercase">
+                    &copy; 2026 <span class="terminal-text">M4RTKL</span>. All Rights Reserved.
+                </div>
+                <div class="flex items-center gap-6 mono text-[10px]">
+                    <div class="flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                        SYSTEM_ACTIVE
+                    </div>
+                    <div class="hidden md:block">
+                        X: 1064 | Y: 70 | Z: 652
+                    </div>
+                    <div class="text-gray-500">
+                        EST. 2026
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
