@@ -46,36 +46,90 @@ function sendMessage() {
  * VIDEO PREVIEW SYSTEM
  * Handles play/pause simulation and timeline progress.
  */
-let isPlaying = false;
-let progressInterval;
+// --- VIDEO PLAYER LOGIC ---
+const video = document.getElementById('main-video-player');
+const playBtn = document.getElementById('play-btn');
+const playIcon = document.getElementById('play-icon');
+const progressBar = document.getElementById('video-progress');
+const timeDisplay = document.getElementById('video-time');
+const timelineTimestamp = document.getElementById('timeline-timestamp');
+const timelineTrack = document.getElementById('timeline-track');
+const renderIndicator = document.getElementById('render-indicator');
 
-function toggleVideoPlay() {
-  const btn = document.getElementById("play-btn");
-  const progress = document.getElementById("video-progress");
-  const timeLabel = document.getElementById("video-time");
-  
-  isPlaying = !isPlaying;
-  
-  if (isPlaying) {
-    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>';
-    progressInterval = setInterval(() => {
-      let currentWidth = parseFloat(progress.style.width) || 0;
-      if (currentWidth >= 100) {
-        currentWidth = 0;
-      }
-      currentWidth += 0.5;
-      progress.style.width = currentWidth + "%";
-      
-      // Update time string (mock)
-      const secs = Math.floor((currentWidth / 100) * 45);
-      timeLabel.innerText = `00:${secs < 10 ? '0' + secs : secs} / 00:45`;
-    }, 100);
-  } else {
-    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>';
-    clearInterval(progressInterval);
-  }
+function formatTime(seconds) {
+	const date = new Date(null);
+	date.setSeconds(seconds);
+	return date.toISOString().substr(14, 5);
 }
 
+function updateVideoUI() {
+	const percent = (video.currentTime / video.duration) * 100;
+	progressBar.style.width = `${percent}%`;
+	
+	const current = formatTime(video.currentTime);
+	const total = isNaN(video.duration) ? "00:00" : formatTime(video.duration);
+	timeDisplay.innerText = `${current} / ${total}`;
+	
+	// Frame-based timestamp simulation
+	const frames = Math.floor((video.currentTime % 1) * 30);
+	timelineTimestamp.innerText = `00:${current}:${frames < 10 ? '0'+frames : frames}`;
+}
+
+function toggleVideoPlay() {
+	if (video.paused) {
+		video.play();
+		playIcon.className = "fas fa-pause text-xs";
+		renderIndicator.classList.remove('bg-blue-500/20');
+		renderIndicator.classList.add('bg-blue-500', 'animate-pulse');
+	} else {
+		video.pause();
+		playIcon.className = "fas fa-play text-xs";
+		renderIndicator.classList.add('bg-blue-500/20');
+		renderIndicator.classList.remove('bg-blue-500', 'animate-pulse');
+	}
+}
+
+function stopVideo() {
+	video.pause();
+	video.currentTime = 0;
+	playIcon.className = "fas fa-play text-xs";
+	renderIndicator.classList.add('bg-blue-500/20');
+	renderIndicator.classList.remove('bg-blue-500', 'animate-pulse');
+}
+
+function rewindVideo() {
+	video.currentTime = Math.max(0, video.currentTime - 5);
+}
+
+function changeVideoSource(src) {
+	video.src = src;
+	video.load();
+	stopVideo();
+}
+
+// Timeline Scrubbing
+timelineTrack.addEventListener('click', (e) => {
+	const rect = timelineTrack.getBoundingClientRect();
+	const pos = (e.clientX - rect.left) / rect.width;
+	video.currentTime = pos * video.duration;
+});
+
+video.addEventListener('timeupdate', updateVideoUI);
+video.addEventListener('loadedmetadata', updateVideoUI);
+video.addEventListener('ended', () => {
+	playIcon.className = "fas fa-play text-xs";
+	renderIndicator.classList.add('bg-blue-500/20');
+	renderIndicator.classList.remove('bg-blue-500', 'animate-pulse');
+});
+
+function toggleSection(boxId, iconId) {
+	const box = document.getElementById(boxId);
+	const icon = document.getElementById(iconId);
+	if (box) {
+		box.classList.toggle('open');
+		if (icon) icon.classList.toggle('rotate-180');
+	}
+}
 
 /**
  * SECURITY MODAL SYSTEM

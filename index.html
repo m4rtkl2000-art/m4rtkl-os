@@ -64,6 +64,7 @@
                         <div data-target="home" class="nav-link active block">HOME</div>
 						<div data-target="info" class="nav-link block">INFO</div>
                         <div data-target="repository" class="nav-link block">REPOSITORY</div>	
+						<div data-target="video" class="nav-link block">VIDEO_EDIT</div>
                         <div data-target="services" class="nav-link block">SERVICES</div>
 						<div data-target="community" class="nav-link">COMMUNITY_HUB</div>
 						<div data-target="about-site" class="nav-link block">ABOUT_SITE</div>
@@ -453,90 +454,84 @@
                         </div>
 						
 						<!-- VIDEO EDITING PREVIEW INTERFACE -->
-						<div class="mt-6 border border-white/10 rounded-xl overflow-hidden bg-black/40 backdrop-blur-md shadow-2xl animate-fade-in">
-							<!-- Header / Tool Name -->
-							<div class="flex items-center justify-between px-4 py-3 bg-white/5 border-b border-white/10">
-								<div class="flex items-center gap-3">
+						<div id="video-section" class="content-section active space-y-6">
+							<div class="flex justify-between items-end border-b border-white/10 pb-2">
+								<h2 class="terminal-text text-xl font-bold tracking-tighter uppercase">Video_Render_Engine</h2>
+								<span class="text-[10px] opacity-50 font-mono">GPU_ACCELERATION: ENABLED</span>
+							</div>
+
+							<!-- Video Editing Suite Interface -->
+							<div class="border border-white/10 rounded-xl overflow-hidden bg-black/40 backdrop-blur-md shadow-2xl">
+								<!-- Suite Toolbar -->
+								<div class="flex items-center justify-between px-4 py-2 bg-white/5 border-b border-white/10">
+									<div class="flex items-center gap-4">
+										<span class="text-[9px] font-bold text-blue-400 uppercase tracking-widest">Video Tool Pro v2.4</span>
+										<div class="h-3 w-[1px] bg-white/10"></div>
+										<div id="video-time" class="text-[10px] font-mono text-gray-400">00:00 / 00:00</div>
+									</div>
 									<div class="flex gap-1.5">
-										<div class="w-2.5 h-2.5 rounded-full bg-red-500/50"></div>
-										<div class="w-2.5 h-2.5 rounded-full bg-yellow-500/50"></div>
-										<div class="w-2.5 h-2.5 rounded-full bg-green-500/50"></div>
-									</div>
-									<span class="text-[10px] terminal-text font-bold text-gray-400 uppercase tracking-widest">Video Tool Pro v2.4</span>
-								</div>
-								<div id="video-time" class="text-[10px] font-mono text-blue-400">00:00 / 00:45</div>
-							</div>
-
-							<div class="flex flex-col md:flex-row h-[400px]">
-								<!-- Main Preview Area -->
-								<div class="flex-grow bg-black relative group flex items-center justify-center overflow-hidden">
-									<!-- Simulated Video Frame -->
-									<div class="w-full h-full bg-gradient-to-br from-gray-900 to-black flex items-center justify-center">
-										<div class="text-center space-y-4 opacity-40 group-hover:opacity-100 transition-opacity">
-											<div class="w-16 h-16 mx-auto border-2 border-dashed border-white/20 rounded-full flex items-center justify-center">
-												<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-white/30"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect><line x1="7" y1="2" x2="7" y2="22"></line><line x1="17" y1="2" x2="17" y2="22"></line><line x1="2" y1="12" x2="22" y2="12"></line><line x1="2" y1="7" x2="7" y2="7"></line><line x1="2" y1="17" x2="7" y2="17"></line><line x1="17" y1="17" x2="22" y2="17"></line><line x1="17" y1="7" x2="22" y2="7"></line></svg>
-											</div>
-											<p class="text-[10px] text-gray-500 font-mono">PREVIEW_LAYER_01 [720p 60fps]</p>
-										</div>
-									</div>
-
-									<!-- Overlay Controls -->
-									<div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4 px-6 py-2 bg-black/60 backdrop-blur-md rounded-full border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-										<button class="hover:text-blue-400 transition-colors">
-											<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-										</button>
-										<button onclick="toggleVideoPlay()" id="play-btn" class="w-10 h-10 flex items-center justify-center bg-blue-500 hover:bg-blue-400 rounded-full text-white shadow-lg shadow-blue-500/20 transition-all">
-											<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-										</button>
-										<button class="hover:text-blue-400 transition-colors">
-											<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-										</button>
+										<div class="w-2 h-2 rounded-full bg-white/10"></div>
+										<div id="render-indicator" class="w-2 h-2 rounded-full bg-blue-500/20 transition-colors duration-300"></div>
 									</div>
 								</div>
 
-								<!-- Layers / Bin Sidebar -->
-								<div class="w-full md:w-64 bg-white/[0.02] border-l border-white/10 p-4 space-y-4">
-									<h4 class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Project Assets</h4>
-									<div class="space-y-2">
-										<div class="flex items-center gap-3 p-2 bg-white/5 rounded-lg border border-white/5 hover:border-blue-500/50 transition-all cursor-pointer">
-											<div class="w-10 h-8 bg-blue-500/20 rounded flex items-center justify-center text-blue-400">
-												<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"></path><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
-											</div>
-											<div>
-												<div class="text-[10px] text-gray-300 font-bold truncate w-32 text-left">intro_final.mp4</div>
-												<div class="text-[8px] text-gray-500">Video | 12.4 MB</div>
-											</div>
+								<div class="flex flex-col md:flex-row h-[350px]">
+									<!-- Main Preview Area (REAL VIDEO) -->
+									<div class="flex-grow bg-black relative group flex items-center justify-center overflow-hidden">
+										<video id="main-video-player" class="w-full h-full object-contain pointer-events-none" preload="auto">
+											<source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-connection-lines-render-15822-large.mp4" type="video/mp4">
+											Your browser does not support the video tag.
+										</video>
+										
+										<!-- Grid Overlay (Optional visual effect) -->
+										<div class="absolute inset-0 opacity-10 pointer-events-none" 
+											 style="background-image: radial-gradient(circle, #ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
+
+										<!-- Overlay Controls -->
+										<div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-4 px-5 py-2 bg-black/80 backdrop-blur-xl rounded-full border border-white/10 opacity-0 group-hover:opacity-100 transition-all duration-300">
+											<button onclick="rewindVideo()" class="text-gray-400 hover:text-white transition-colors"><i class="fas fa-undo text-xs"></i></button>
+											<button onclick="toggleVideoPlay()" id="play-btn" class="w-8 h-8 flex items-center justify-center bg-blue-600 hover:bg-blue-500 rounded-full text-white shadow-lg transition-all">
+												<i id="play-icon" class="fas fa-play text-xs"></i>
+											</button>
+											<button onclick="stopVideo()" class="text-gray-400 hover:text-white transition-colors"><i class="fas fa-stop text-xs"></i></button>
 										</div>
-										<div class="flex items-center gap-3 p-2 bg-white/5 rounded-lg border border-white/5 hover:border-blue-500/50 transition-all cursor-pointer">
-											<div class="w-10 h-8 bg-purple-500/20 rounded flex items-center justify-center text-purple-400">
-												<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+									</div>
+
+									<!-- Asset Sidebar -->
+									<div class="w-full md:w-56 bg-white/[0.02] border-l border-white/10 p-3 space-y-3">
+										<h4 class="text-[9px] font-bold text-gray-500 uppercase tracking-widest border-b border-white/5 pb-1">Assets_Bin</h4>
+										<div class="space-y-2 overflow-y-auto max-h-[280px] pr-1 custom-scrollbar">
+											<div onclick="changeVideoSource('https://assets.mixkit.co/videos/preview/mixkit-abstract-technology-connection-lines-render-15822-large.mp4')" class="flex items-center gap-2 p-2 bg-white/5 rounded border border-blue-500/40 transition-all cursor-pointer">
+												<i class="fas fa-file-video text-blue-500 text-xs"></i>
+												<div class="truncate"><p class="text-[9px] text-gray-300 font-bold truncate">abstract_grid.mp4</p></div>
 											</div>
-											<div>
-												<div class="text-[10px] text-gray-300 font-bold truncate w-32 text-left">background_bgm.wav</div>
-												<div class="text-[8px] text-gray-500">Audio | 4.1 MB</div>
+											<div onclick="changeVideoSource('https://assets.mixkit.co/videos/preview/mixkit-matrix-style-code-digital-background-44165-large.mp4')" class="flex items-center gap-2 p-2 bg-white/5 rounded border border-white/5 hover:border-green-500/40 transition-all cursor-pointer">
+												<i class="fas fa-file-video text-green-500 text-xs"></i>
+												<div class="truncate"><p class="text-[9px] text-gray-300 font-bold truncate">digital_code.mp4</p></div>
 											</div>
 										</div>
 									</div>
 								</div>
-							</div>
 
-							<!-- Timeline Area -->
-							<div class="bg-black/60 border-t border-white/10 p-4 h-32 flex flex-col gap-3">
-								<div class="flex items-center justify-between text-[9px] font-mono text-gray-500">
-									<span>TIMELINE_01</span>
-									<span class="text-blue-400/80">00:15:22:01</span>
-								</div>
-								<!-- Progress Track -->
-								<div class="relative w-full h-1 bg-white/10 rounded-full overflow-hidden">
-									<div id="video-progress" class="absolute top-0 left-0 h-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)] transition-all" style="width: 0%"></div>
-								</div>
-								<!-- Simulated Layers -->
-								<div class="space-y-1">
-									<div class="h-4 w-full bg-blue-500/10 rounded border-l-2 border-blue-500 flex items-center px-2">
-										<div class="w-1/3 h-2 bg-blue-500/40 rounded-sm"></div>
+								<!-- Timeline Area -->
+								<div class="bg-black/60 border-t border-white/10 p-3 h-28 flex flex-col gap-2">
+									<div class="flex items-center justify-between text-[8px] font-mono text-gray-500">
+										<span class="flex items-center gap-1"><i class="fas fa-layer-group text-[8px]"></i> SEQUENCE_01</span>
+										<span id="timeline-timestamp" class="text-blue-500">00:00:00:00</span>
 									</div>
-									<div class="h-4 w-full bg-purple-500/10 rounded border-l-2 border-purple-500 flex items-center px-2">
-										<div class="w-2/3 h-2 bg-purple-500/40 rounded-sm ml-4"></div>
+									<!-- Progress Track (Interactable) -->
+									<div id="timeline-track" class="relative w-full h-2 bg-white/5 rounded-full cursor-pointer group">
+										<div id="video-progress" class="absolute top-0 left-0 h-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.4)] pointer-events-none" style="width: 0%"></div>
+										<div class="absolute top-0 left-0 w-full h-full opacity-0 group-hover:bg-white/5 transition-opacity"></div>
+									</div>
+									<!-- Layers -->
+									<div class="space-y-1">
+										<div class="h-3 w-full bg-blue-500/10 rounded border-l-2 border-blue-500 flex items-center px-2">
+											<div id="video-layer-indicator" class="h-1.5 bg-blue-500/30 rounded-full transition-all" style="width: 100%"></div>
+										</div>
+										<div class="h-3 w-full bg-purple-500/10 rounded border-l-2 border-purple-500 flex items-center px-2">
+											<div class="w-40 h-1.5 bg-purple-500/30 rounded-full ml-10"></div>
+										</div>
 									</div>
 								</div>
 							</div>
