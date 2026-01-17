@@ -26,53 +26,63 @@ function toggleSection(boxId, iconId) {
 }
 
 /**
- * Handles sending messages in the simulated chat interface.
+ * VIDEO SYSTEM - GLOBAL SCOPE
+ * ย้ายออกมาจาก DOMContentLoaded เพื่อให้ปุ่ม HTML เรียกใช้งานได้
  */
-function sendMessage() {
-  const input = document.getElementById("chat-input");
-  const container = document.getElementById("message-container");
-
-  if (input && container && input.value.trim() !== "") {
-    const msg = document.createElement("div");
-    msg.className = "flex gap-3";
-    msg.innerHTML = `<span class="text-green-500">YOU:</span><span class="text-gray-500">${input.value}</span>`;
-    container.appendChild(msg);
-    input.value = "";
-    container.scrollTop = container.scrollHeight;
-  }
-}
-
-/**
- * VIDEO PREVIEW SYSTEM
- * Handles play/pause simulation and timeline progress.
- */
-// --- VIDEO PLAYER LOGIC ---
 const video = document.getElementById('main-video-player');
-const playBtn = document.getElementById('play-btn');
+const embedPlayer = document.getElementById('embed-player');
 const playIcon = document.getElementById('play-icon');
 const progressBar = document.getElementById('video-progress');
 const timeDisplay = document.getElementById('video-time');
 const timelineTimestamp = document.getElementById('timeline-timestamp');
 const timelineTrack = document.getElementById('timeline-track');
 const renderIndicator = document.getElementById('render-indicator');
+const videoControls = document.getElementById('video-controls');
+const timelineSection = document.getElementById('timeline-section');
 
 function formatTime(seconds) {
-	const date = new Date(null);
-	date.setSeconds(seconds);
-	return date.toISOString().substr(14, 5);
+	if (isNaN(seconds) || seconds === Infinity) return "00:00";
+	const mins = Math.floor(seconds / 60);
+	const secs = Math.floor(seconds % 60);
+	return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
 function updateVideoUI() {
+	if (!video.duration) return;
 	const percent = (video.currentTime / video.duration) * 100;
 	progressBar.style.width = `${percent}%`;
 	
 	const current = formatTime(video.currentTime);
-	const total = isNaN(video.duration) ? "00:00" : formatTime(video.duration);
+	const total = formatTime(video.duration);
 	timeDisplay.innerText = `${current} / ${total}`;
 	
-	// Frame-based timestamp simulation
+	// Frame calculation simulation (30fps)
 	const frames = Math.floor((video.currentTime % 1) * 30);
-	timelineTimestamp.innerText = `00:${current}:${frames < 10 ? '0'+frames : frames}`;
+	timelineTimestamp.innerText = `00:${current}:${frames.toString().padStart(2, '0')}`;
+}
+
+function setSource(src, type) {
+	if (type === 'direct') {
+		video.classList.remove('hidden');
+		embedPlayer.classList.add('hidden');
+		videoControls.classList.remove('hidden');
+		timelineSection.style.opacity = '1';
+		timelineSection.style.pointerEvents = 'auto';
+		video.src = src;
+		video.load();
+		stopVideo();
+	} else if (type === 'embed') {
+		video.classList.add('hidden');
+		embedPlayer.classList.remove('hidden');
+		videoControls.classList.add('hidden');
+		timelineSection.style.opacity = '0.3';
+		timelineSection.style.pointerEvents = 'none';
+		embedPlayer.src = src;
+		timeDisplay.innerText = "LIVE / STREAM";
+		timelineTimestamp.innerText = "EXTERNAL_SOURCE";
+		renderIndicator.classList.remove('bg-blue-500/20');
+		renderIndicator.classList.add('bg-red-500', 'animate-pulse');
+	}
 }
 
 function toggleVideoPlay() {
@@ -94,42 +104,31 @@ function stopVideo() {
 	video.currentTime = 0;
 	playIcon.className = "fas fa-play text-xs";
 	renderIndicator.classList.add('bg-blue-500/20');
-	renderIndicator.classList.remove('bg-blue-500', 'animate-pulse');
+	renderIndicator.classList.remove('bg-blue-500', 'animate-pulse', 'bg-red-500');
+	updateVideoUI();
 }
 
 function rewindVideo() {
 	video.currentTime = Math.max(0, video.currentTime - 5);
 }
+		
+/**
+ * Handles sending messages in the simulated chat interface.
+ */
+function sendMessage() {
+  const input = document.getElementById("chat-input");
+  const container = document.getElementById("message-container");
 
-function changeVideoSource(src) {
-	video.src = src;
-	video.load();
-	stopVideo();
+  if (input && container && input.value.trim() !== "") {
+    const msg = document.createElement("div");
+    msg.className = "flex gap-3";
+    msg.innerHTML = `<span class="text-green-500">YOU:</span><span class="text-gray-500">${input.value}</span>`;
+    container.appendChild(msg);
+    input.value = "";
+    container.scrollTop = container.scrollHeight;
+  }
 }
 
-// Timeline Scrubbing
-timelineTrack.addEventListener('click', (e) => {
-	const rect = timelineTrack.getBoundingClientRect();
-	const pos = (e.clientX - rect.left) / rect.width;
-	video.currentTime = pos * video.duration;
-});
-
-video.addEventListener('timeupdate', updateVideoUI);
-video.addEventListener('loadedmetadata', updateVideoUI);
-video.addEventListener('ended', () => {
-	playIcon.className = "fas fa-play text-xs";
-	renderIndicator.classList.add('bg-blue-500/20');
-	renderIndicator.classList.remove('bg-blue-500', 'animate-pulse');
-});
-
-function toggleSection(boxId, iconId) {
-	const box = document.getElementById(boxId);
-	const icon = document.getElementById(iconId);
-	if (box) {
-		box.classList.toggle('open');
-		if (icon) icon.classList.toggle('rotate-180');
-	}
-}
 
 /**
  * SECURITY MODAL SYSTEM
