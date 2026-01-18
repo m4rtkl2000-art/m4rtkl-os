@@ -375,7 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (targetSection) targetSection.classList.add("active");
       
       // Update breadcrumb title
-      if (viewTitle) viewTitle.innerText = `PATH: //SYSTEM_OS/${target.toUpperCase()}`;
+      if (viewTitle) viewTitle.innerText = `PATH: //M4RTKL_OS/${target.toUpperCase()}`;
     });
   });
 
