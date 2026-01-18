@@ -82,7 +82,7 @@ function setSource(src, type) {
 		timelineTimestamp.innerText = "EXTERNAL_SOURCE";
 		renderIndicator.classList.remove('bg-blue-500/20');
 		renderIndicator.classList.add('bg-red-500', 'animate-pulse');
-	}
+	} 
 }
 
 function toggleVideoPlay() {
