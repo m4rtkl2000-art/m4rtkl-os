@@ -1,6 +1,6 @@
 # 🖥️ M4RTKL OS Simulation
 
-A web-based Operating System (OS) Simulation styled like a **Terminal / Hacker Interface**, built using **HTML**, **Tailwind CSS**, and **Vanilla JavaScript**.
+A web-based information about me design as Operating System (OS) Simulation styled like a **Terminal / Hacker Interface**, built using **HTML**, **Tailwind CSS**, and **Vanilla JavaScript**.
 
 ---
 
