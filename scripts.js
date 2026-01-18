@@ -96,7 +96,7 @@ function toggleVideoPlay() {
 		playIcon.className = "fas fa-play text-xs";
 		renderIndicator.classList.add('bg-blue-500/20');
 		renderIndicator.classList.remove('bg-blue-500', 'animate-pulse');
-	}
+	} 
 }
 
 function stopVideo() {
